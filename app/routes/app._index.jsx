@@ -11,11 +11,9 @@ import {
   MagicIcon,
   AutomationIcon,
   GaugeIcon,
-  PlanIcon,
-  ImagesIcon,
-  CheckCircleIcon,
+  ProductListIcon,
 } from "@shopify/polaris-icons";
-import { BrandMark, Mosaic, PixelMeter } from "../components/Pixels";
+import { Facets, LogoMark, Ring } from "../components/Brand";
 
 export const loader = async ({ request }) => {
   const { admin, session } = await authenticate.admin(request);
@@ -49,6 +47,12 @@ export const loader = async ({ request }) => {
   };
 };
 
+const STEPS = [
+  { icon: ProductListIcon, title: "Pick your products", desc: "Choose one product, a few, or your whole catalog." },
+  { icon: ImageMagicIcon, title: "Click Compress", desc: "Photos become lean WebP files and are swapped in place." },
+  { icon: GaugeIcon, title: "Enjoy a faster store", desc: "Lighter pages load quicker for every shopper." },
+];
+
 export default function Index() {
   const navigate = useNavigate();
   const { plan, usage, autoOptimize } = useLoaderData();
@@ -60,16 +64,16 @@ export default function Index() {
   const fmt = (n) => Number(n).toLocaleString();
 
   const autoStatus = !plan.autoOptimizeAllowed
-    ? { label: "Growth plan", tone: "attention" }
+    ? { label: "Growth+", tone: "attention" }
     : autoOptimize
-      ? { label: "Running", tone: "success" }
-      : { label: "Paused", tone: undefined };
+      ? { label: "On", tone: "success" }
+      : { label: "Off", tone: undefined };
 
   const tools = [
     {
       icon: ImageMagicIcon,
       title: "Compress",
-      desc: "Re-encode product photos as lean WebP files and swap them in place — same look, a fraction of the weight.",
+      desc: "Re-encode product photos as WebP and swap them in place. Same look, a fraction of the weight.",
       cta: "Start compressing",
       onClick: () => navigate("/app/optimize"),
       available: true,
@@ -77,7 +81,7 @@ export default function Index() {
     {
       icon: MagicIcon,
       title: "Alt Writer",
-      desc: "AI looks at each product photo and writes descriptive, search-friendly alt text you can apply in bulk.",
+      desc: "AI looks at each product photo and writes descriptive, search-friendly alt text.",
       cta: plan.altText ? "Write alt text" : "Unlock with Starter",
       onClick: () => navigate(plan.altText ? "/app/alt-text" : "/app/plan"),
       available: plan.altText,
@@ -86,7 +90,7 @@ export default function Index() {
     {
       icon: AutomationIcon,
       title: "Autopilot",
-      desc: "New products get compressed automatically the moment they are created — nothing to remember.",
+      desc: "New products are compressed automatically the moment they're created.",
       cta: plan.autoOptimizeAllowed ? "Configure" : "Unlock with Growth",
       onClick: () => navigate(plan.autoOptimizeAllowed ? "/app/optimize" : "/app/plan"),
       available: plan.autoOptimizeAllowed,
@@ -95,7 +99,7 @@ export default function Index() {
     {
       icon: GaugeIcon,
       title: "Speed Lab",
-      desc: "Run live Lighthouse tests on product pages and see exactly how much image weight you have shed.",
+      desc: "Run live Lighthouse tests on product pages and see how much weight you've shed.",
       cta: plan.pageSpeed ? "Open Speed Lab" : "Unlock with Growth",
       onClick: () => navigate(plan.pageSpeed ? "/app/speed" : "/app/plan"),
       available: plan.pageSpeed,
@@ -103,79 +107,72 @@ export default function Index() {
     },
   ];
 
-  const stats = [
-    { icon: PlanIcon, label: "Plan", value: plan.name },
-    { icon: ImagesIcon, label: "Compressed this month", value: fmt(used) },
-    { icon: CheckCircleIcon, label: "Credits left", value: fmt(remaining) },
-    { icon: AutomationIcon, label: "Autopilot", value: autoStatus.label },
-  ];
-
   return (
     <Page>
-      <section className="pp-hero">
-        <div className="pp-hero-main">
-          <p className="pp-kicker"><BrandMark />PIXLUME</p>
-          <h1>
-            Every pixel, <em>perfectly tuned.</em>
-          </h1>
-          <p className="pp-hero-sub">
-            Shrink product photos to WebP, give every image meaningful alt text, and watch your
-            storefront get quicker — all from one calm dashboard.
+      <section className="lm-hero">
+        <Facets />
+        <div className="lm-hero-copy">
+          <p className="lm-hero-brand"><LogoMark size={30} bare />Pixlume</p>
+          <h1>Lighter photos.<br />Faster store.</h1>
+          <p className="lm-hero-sub">
+            Compress product photos to WebP, add meaningful alt text, and measure how much
+            quicker your storefront gets.
           </p>
-          <div className="pp-actions">
-            <button type="button" className="pp-btn pp-btn-primary" onClick={() => navigate("/app/optimize")}>
+          <div className="lm-actions">
+            <button type="button" className="lm-btn lm-btn-white" onClick={() => navigate("/app/optimize")}>
               Compress images
             </button>
-            <button type="button" className="pp-btn pp-btn-outline" onClick={() => navigate("/app/plan")}>
+            <button type="button" className="lm-btn lm-btn-glass" onClick={() => navigate("/app/plan")}>
               View plan
             </button>
           </div>
-          <Mosaic />
         </div>
 
-        <div className="pp-usage-card">
-          <Mosaic />
-          <div>
-            <p className="pp-usage-label">{`${plan.name} · this month`}</p>
-            <p className="pp-usage-big">
-              {fmt(used)}<span>{` / ${fmt(quota)}`}</span>
-            </p>
-            <p className="pp-usage-foot">images compressed</p>
+        <div className="lm-hero-card">
+          <div className="lm-hero-card-head">
+            <span>Credits this month</span>
+            <Badge tone={plan.tier === "free" ? undefined : "success"}>{`${plan.name} plan`}</Badge>
           </div>
-          <PixelMeter pct={pct} label={`${pct}% of monthly images used`} />
-          <p className="pp-usage-foot">{`${fmt(remaining)} credits left · resets on the 1st`}</p>
+          <div className="lm-hero-card-body">
+            <Ring pct={pct} size={124} label={`${pct}% of monthly credits used`}>
+              <strong>{fmt(remaining)}</strong>
+              <span>left</span>
+            </Ring>
+            <dl className="lm-facts">
+              <div><dt>Used</dt><dd>{fmt(used)}</dd></div>
+              <div><dt>Monthly credits</dt><dd>{fmt(quota)}</dd></div>
+              <div><dt>Autopilot</dt><dd>{autoStatus.label}</dd></div>
+            </dl>
+          </div>
+          <p className="lm-hero-card-foot">Credits reset on the 1st of every month</p>
         </div>
       </section>
 
-      <div className="pp-stats">
-        {stats.map((s) => (
-          <div key={s.label} className="pp-stat">
-            <div className="pp-stat-top">
-              <span className="pp-stat-icon"><Icon source={s.icon} /></span>
-              {s.label}
-            </div>
-            <p className="pp-stat-value">{s.value}</p>
-          </div>
+      <h2 className="lm-section-title">How it works</h2>
+      <ol className="lm-steps">
+        {STEPS.map((s, i) => (
+          <li key={s.title} className="lm-step">
+            <span className="lm-step-num">{i + 1}</span>
+            <span className="lm-step-icon"><Icon source={s.icon} /></span>
+            <p className="lm-step-title">{s.title}</p>
+            <p className="lm-step-desc">{s.desc}</p>
+          </li>
         ))}
-      </div>
+      </ol>
 
-      <p className="pp-section-title"><BrandMark />Tools</p>
-      <div className="pp-tools">
+      <h2 className="lm-section-title">Your tools</h2>
+      <div className="lm-tools">
         {tools.map((t) => (
-          <div key={t.title} className={`pp-tool${t.available ? "" : " pp-tool-locked"}`}>
-            <span className="pp-tool-icon"><Icon source={t.icon} /></span>
-            <div className="pp-tool-body">
-              <div className="pp-tool-head">
-                <p className="pp-tool-title">{t.title}</p>
-                {t.badge && <Badge tone={t.badge.tone}>{t.badge.label}</Badge>}
-              </div>
-              <p className="pp-tool-desc">{t.desc}</p>
-              <div>
-                <Button variant={t.available ? "primary" : "secondary"} onClick={t.onClick}>
-                  {t.cta}
-                </Button>
-              </div>
+          <div key={t.title} className={`lm-tool${t.available ? "" : " is-locked"}`}>
+            <div className="lm-tool-head">
+              <span className="lm-tool-icon"><Icon source={t.icon} /></span>
+              {t.badge && <Badge tone={t.badge.tone}>{t.badge.label}</Badge>}
             </div>
+            <p className="lm-tool-title">{t.title}</p>
+            <p className="lm-tool-desc">{t.desc}</p>
+            <Button variant={t.available ? "primary" : "secondary"} onClick={t.onClick} fullWidth>
+              {t.cta}
+            </Button>
           </div>
         ))}
       </div>

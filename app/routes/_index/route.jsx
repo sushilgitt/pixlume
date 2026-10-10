@@ -1,4 +1,5 @@
 import { redirect } from "react-router";
+import { Facets, LogoMark } from "../../components/Brand";
 import styles from "./styles.module.css";
 
 export const loader = async ({ request }) => {
@@ -16,20 +17,16 @@ export const loader = async ({ request }) => {
 export default function App() {
   return (
     <div className={styles.index}>
+      <Facets />
       <div className={styles.content}>
-        <p className={styles.eyebrow}>
-          <span className={styles.mark} aria-hidden="true"><i /><i /><i /></span>
+        <p className={styles.brand}>
+          <LogoMark size={40} bare />
           Pixlume
         </p>
-        <h1 className={styles.heading}>
-          Every pixel, <em>perfectly tuned.</em>
-        </h1>
+        <h1 className={styles.heading}>Lighter photos. Faster store.</h1>
         <p className={styles.text}>
-          Compression, AI alt text and speed testing for Shopify product photos — so your store looks
+          Compression, AI alt text and speed testing for Shopify product photos, so your store looks
           sharp and loads fast.
-        </p>
-        <p className={styles.note}>
-          Get Pixlume from the Shopify App Store, then open it from Apps in your Shopify admin.
         </p>
         <ul className={styles.list}>
           <li>
@@ -42,6 +39,9 @@ export default function App() {
             <strong>Speed Lab</strong> On-demand Lighthouse tests show how much faster your pages got.
           </li>
         </ul>
+        <p className={styles.note}>
+          Get Pixlume from the Shopify App Store, then open it from Apps in your Shopify admin.
+        </p>
       </div>
     </div>
   );

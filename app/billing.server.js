@@ -27,7 +27,7 @@ const CANCEL_MUTATION = `#graphql
     }
   }`;
 
-const FALLBACK_APP_HANDLE = "pixel-pride";
+const FALLBACK_APP_HANDLE = "pixlume";
 
 // Dev-only plan override. Development stores cannot approve PAID managed-pricing
 // subscriptions (Shopify restriction), so paid tiers can't be tested by

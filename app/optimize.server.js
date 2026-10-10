@@ -1,8 +1,7 @@
 // Image-optimization pipeline (server only).
 //
-// Extracted from app/routes/app.Productoptimization.jsx so it can be shared by
-// both the interactive optimizer route AND the background products/create
-// webhook. Everything here runs server-side (uses sharp + node DNS).
+// Shared by both the interactive optimizer route AND the background
+// products/create webhook. Everything here runs server-side (uses sharp + node DNS).
 //
 // optimizeBatch processes ONE batch of a product's images per call and persists
 // per-image + summary metafields. Callers loop it until { done: true }. It also

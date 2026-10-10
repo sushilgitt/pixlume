@@ -12,7 +12,7 @@ export const PLAN_TIERS = [
     price: 0,
     priceAnnual: 0,
     images: "100",
-    tagline: "Kick the tyres",
+    tagline: "Try it free",
     features: [
       "100 compression credits a month",
       "WebP compression, swapped in place",
